@@ -19,7 +19,8 @@ public func configure(_ app: Application) async throws {
     
     //Add Migrations
     app.migrations.add(CreatePlantsTable())
-    try app.autoMigrate().wait()
+    app.migrations.add(UsersTableMigrationAction())
+    try await app.autoMigrate()
     
     // register routes
     try routes(app)
