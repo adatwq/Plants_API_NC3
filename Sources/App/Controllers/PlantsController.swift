@@ -11,6 +11,7 @@ import Fluent
 struct PlantsController: RouteCollection{
     func boot(routes: RoutesBuilder) throws {
         let plants = routes.grouped("plants")
+            .grouped(JWTAuthMiddleware())
         plants.get(use: index)
         plants.post(use: post)
         plants.put(use: update)

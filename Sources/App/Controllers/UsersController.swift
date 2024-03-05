@@ -34,7 +34,7 @@ struct UsersController: RouteCollection{
     }
     
     //Check if valid (exist) user - Login - POST
-    func login(req: Request) async throws  -> User{
+    func login(req: Request) async throws  -> [String: String]{
         let userAuth = try req.content.decode(LoginRequest.self)
         let userInDB = try await User.query(on: req.db)
             .filter(\.$email == userAuth.email)
@@ -49,7 +49,10 @@ struct UsersController: RouteCollection{
         guard result else {
             throw Abort(.badRequest, reason: "Password is not correct")
         }
-        
-      return userInDB
+        let payload = AuthPayload(expiration: .init(value: .distantFuture), userId: try userInDB.requireID())
+
+        return try [
+            "token": req.jwt.sign(payload)
+        ]
     }
 }

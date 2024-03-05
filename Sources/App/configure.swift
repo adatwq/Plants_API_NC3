@@ -1,6 +1,7 @@
 import Vapor
 import Fluent
 import FluentPostgresDriver
+import JWT
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -22,6 +23,8 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(UsersTableMigrationAction())
     try await app.autoMigrate()
     
+    //JWT
+    app.jwt.signers.use(.hs256(key: "secret"))
     // register routes
     try routes(app)
 }
